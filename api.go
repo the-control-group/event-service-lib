@@ -28,9 +28,10 @@ func Listen(log logger) (err error) {
 	}
 	listener, err = net.ListenTCP("tcp", address)
 	if err != nil {
-		log.Error("Reading bytes", err)
+		log.Error("Unable to listen", address, err)
 		return
 	}
+	log.Info("Listening", address)
 	defer listener.Close()
 	serve(log, listener)
 	return
