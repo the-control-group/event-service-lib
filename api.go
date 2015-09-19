@@ -18,8 +18,7 @@ type apiMessageHandler func(msg []byte, writer *textproto.Writer)
 
 type apiErrorHandler func(error, *textproto.Writer)
 
-func Listen(log logger) (err error) {
-	var listener *net.TCPListener
+func Listen(log logger) (listener *net.TCPListener, err error) {
 	// Automatically assign open port
 	address, _ := net.ResolveTCPAddr("tcp", net.JoinHostPort("127.0.0.1", "0"))
 	if err != nil {
@@ -33,7 +32,7 @@ func Listen(log logger) (err error) {
 	}
 	log.Info("Listening", listener.Addr())
 	go serve(log, listener)
-	return listener
+	return
 }
 
 func serve(log logger, listener *net.TCPListener) (err error) {
