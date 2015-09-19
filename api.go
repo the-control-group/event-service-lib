@@ -31,7 +31,7 @@ func Listen(log logger) (err error) {
 		log.Error("Unable to listen", address, err)
 		return
 	}
-	log.Info("Listening", address)
+	log.Info("Listening", listener.Addr())
 	defer listener.Close()
 	serve(log, listener)
 	return
