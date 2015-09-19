@@ -7,14 +7,14 @@ import (
 
 var subscription *nats.Subscription
 
-func subscribe(nc *nats.EncodedConn, subscriberPrefix, queueGroup string, handler nats.MsgHandler) {
+func Subscribe(nc *nats.Conn, subscriberPrefix, queueGroup string, handler nats.MsgHandler) {
 	for {
 		select {
 		case <-Done:
 			subscription.Unsubscribe()
 			return
 		default:
-			for !nc.Conn.IsClosed() && (subscription == nil || !subscription.IsValid()) {
+			for !nc.IsClosed() && (subscription == nil || !subscription.IsValid()) {
 				select {
 				case <-Done:
 					subscription.Unsubscribe()

@@ -9,7 +9,7 @@ import (
 /*
 	Should retry indefinitely to establish connection and should reconnect indefinitely if connection is lost
 */
-func newGnatsConnection(addr *Address) *nats.Conn {
+func NewGnatsConnection(addr *Address) *nats.Conn {
 	var err error
 
 	var opts = nats.DefaultOptions
