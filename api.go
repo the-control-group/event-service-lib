@@ -20,17 +20,16 @@ type apiErrorHandler func(error, *textproto.Writer)
 
 func Listen(log logger) (listener *net.TCPListener, err error) {
 	// Automatically assign open port
-	address, _ := net.ResolveTCPAddr("tcp", net.JoinHostPort("127.0.0.1", "0"))
+	address, err := net.ResolveTCPAddr("tcp", net.JoinHostPort("127.0.0.1", "0"))
 	if err != nil {
-		log.Error("Reading bytes", err)
+		log.Error("Unable to resolve tcp address", err)
 		return
 	}
 	listener, err = net.ListenTCP("tcp", address)
 	if err != nil {
-		log.Error("Unable to listen", address, err)
+		log.Error("Unable to establsih listener", err)
 		return
 	}
-	log.Info("Listening", listener.Addr())
 	go serve(log, listener)
 	return
 }
