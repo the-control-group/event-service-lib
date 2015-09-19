@@ -32,9 +32,8 @@ func Listen(log logger) (err error) {
 		return
 	}
 	log.Info("Listening", listener.Addr())
-	defer listener.Close()
-	serve(log, listener)
-	return
+	go serve(log, listener)
+	return listener
 }
 
 func serve(log logger, listener *net.TCPListener) (err error) {
