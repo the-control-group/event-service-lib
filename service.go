@@ -4,8 +4,6 @@ import ()
 
 var Done = make(chan bool, 1)
 
-var Log logger
-
 type logger interface {
 	Debug(v ...interface{})
 	Debugf(format string, v ...interface{})
