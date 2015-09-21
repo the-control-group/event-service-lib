@@ -45,7 +45,7 @@ func serve(log logger, listener *net.TCPListener) (err error) {
 			var c *net.TCPConn
 			c, err = listener.AcceptTCP()
 			if err != nil {
-				log.Error("Reading bytes", err)
+				log.Debug(err)
 				if opErr, ok := err.(*net.OpError); ok && opErr.Timeout() {
 					continue
 				}
