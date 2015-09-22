@@ -10,13 +10,13 @@ import (
 
 var ApiWelcomeMessage string = "This is the API welcome message"
 
-var ApiMessageHandlers = []apiMessageHandler{}
+var ApiMessageHandlerFns = []ApiMessageHandler{}
 
-var ApiErrorHandler apiErrorHandler
+var ApiErrorHandlerFn ApiErrorHandler
 
-type apiMessageHandler func(msg []byte, writer *textproto.Writer)
+type ApiMessageHandler func(msg []byte, writer *textproto.Writer)
 
-type apiErrorHandler func(error, *textproto.Writer)
+type ApiErrorHandler func(error, *textproto.Writer)
 
 func Listen(log logger) (listener *net.TCPListener, err error) {
 	// Automatically assign open port
