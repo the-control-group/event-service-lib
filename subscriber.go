@@ -1,7 +1,7 @@
 package lib
 
 import (
-	"github.com/apcera/nats"
+	"github.com/the-control-group/nats"
 )
 
 func Subscribe(_ logger, nc *nats.Conn, subject, queueGroup string) (subscription *nats.Subscription, err error) {
