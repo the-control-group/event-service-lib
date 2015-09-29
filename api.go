@@ -76,11 +76,13 @@ func handleConnection(log logger, c *net.TCPConn) {
 			bufc := bufio.NewReader(c)
 			msg, err = bufc.ReadBytes('\n')
 			if err != nil {
-				log.Debug("Reading bytes", err)
-				if ApiErrorHandlerFn != nil {
-					ApiErrorHandlerFn(err, writer)
+				if err.Error() != "EOF" {
+					log.Debug("Reading bytes", err)
+					if ApiErrorHandlerFn != nil {
+						ApiErrorHandlerFn(err, writer)
+					}
 				}
-				continue
+				return
 			}
 			for _, h := range ApiMessageHandlerFns {
 				h(msg, writer)
