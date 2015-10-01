@@ -15,10 +15,11 @@ type Deadletter struct {
 	Reason  string `json:"reason"`
 	Error   string `json:"error"`
 	Message string `json:"message"`
+	Process string `json:"process"`
 }
 
-func SendDeadletter(log *logrus.Entry, nc *nats.Conn, subject, reason, errStr, message string) {
-	dl := Deadletter{subject, reason, errStr, message}
+func SendDeadletter(log *logrus.Entry, nc *nats.Conn, subject, reason, errStr, message, process string) {
+	dl := Deadletter{subject, reason, errStr, message, process}
 	log.WithFields(logrus.Fields{"deadletter": dl}).Warn("Publishing deadletter message")
 	var dlJson, err = json.Marshal(dl)
 	if err != nil {
