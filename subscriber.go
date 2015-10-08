@@ -1,12 +1,13 @@
 package lib
 
 import (
+	"github.com/Sirupsen/logrus"
 	"github.com/the-control-group/nats"
 	"sync"
 	"time"
 )
 
-func Subscribe(_ logger, nc *nats.Conn, subject, queueGroup string) (subscription *nats.Subscription, err error) {
+func Subscribe(_ *logrus.Entry, nc *nats.Conn, subject, queueGroup string) (subscription *nats.Subscription, err error) {
 	subscription, err = nc.QueueSubscribeSync(subject, queueGroup)
 	if err != nil {
 		return
@@ -14,7 +15,7 @@ func Subscribe(_ logger, nc *nats.Conn, subject, queueGroup string) (subscriptio
 	return
 }
 
-func HandleMessages(log logger, wg *sync.WaitGroup, subscription *nats.Subscription, handler nats.MsgHandler) {
+func HandleMessages(log *logrus.Entry, wg *sync.WaitGroup, subscription *nats.Subscription, handler nats.MsgHandler) {
 	var msg *nats.Msg
 	var err error
 	var q int
@@ -38,12 +39,12 @@ func HandleMessages(log logger, wg *sync.WaitGroup, subscription *nats.Subscript
 			case nats.ErrNoMessages:
 				break
 			default:
-				log.Warn("Unable to read next message")
+				log.WithError(err).Warn("Unable to read next message")
 			}
 			time.Sleep(1 * time.Second)
 			continue
 		}
-		handler(msg)
+		go handler(msg)
 	}
 	log.Debug("Done handling messages")
 }

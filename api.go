@@ -2,6 +2,7 @@ package lib
 
 import (
 	"bufio"
+	"github.com/Sirupsen/logrus"
 	"net"
 	"net/textproto"
 	"sync"
@@ -18,23 +19,23 @@ type ApiMessageHandler func(msg []byte, writer *textproto.Writer)
 
 type ApiErrorHandler func(error, *textproto.Writer)
 
-func Listen(log logger) (listener *net.TCPListener, err error) {
+func Listen(log *logrus.Entry) (listener *net.TCPListener, err error) {
 	// Automatically assign open port
 	address, err := net.ResolveTCPAddr("tcp", net.JoinHostPort("127.0.0.1", "0"))
 	if err != nil {
-		log.Error("Unable to resolve tcp address", err)
+		log.WithError(err).Error("Unable to resolve tcp address")
 		return
 	}
 	listener, err = net.ListenTCP("tcp", address)
 	if err != nil {
-		log.Error("Unable to establsih listener", err)
+		log.WithError(err).Error("Unable to establsih listener")
 		return
 	}
 	go serve(log, listener)
 	return
 }
 
-func serve(log logger, listener *net.TCPListener) (err error) {
+func serve(log *logrus.Entry, listener *net.TCPListener) (err error) {
 	var wg sync.WaitGroup
 	for {
 		select {
@@ -45,7 +46,7 @@ func serve(log logger, listener *net.TCPListener) (err error) {
 			var c *net.TCPConn
 			c, err = listener.AcceptTCP()
 			if err != nil {
-				log.Debug(err)
+				log.WithError(err).Debug("Unable to accept TCP")
 				if opErr, ok := err.(*net.OpError); ok && opErr.Timeout() {
 					continue
 				}
@@ -60,7 +61,7 @@ func serve(log logger, listener *net.TCPListener) (err error) {
 	}
 }
 
-func handleConnection(log logger, c *net.TCPConn) {
+func handleConnection(log *logrus.Entry, c *net.TCPConn) {
 	var err error
 	defer c.Close()
 	var timeout = 60 * time.Second
@@ -77,7 +78,7 @@ func handleConnection(log logger, c *net.TCPConn) {
 			msg, err = bufc.ReadBytes('\n')
 			if err != nil {
 				if err.Error() != "EOF" {
-					log.Debug("Reading bytes", err)
+					log.WithError(err).Debug("Unable to read from connection")
 					if ApiErrorHandlerFn != nil {
 						ApiErrorHandlerFn(err, writer)
 					}

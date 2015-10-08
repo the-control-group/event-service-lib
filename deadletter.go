@@ -11,15 +11,15 @@ var DLS_REASON_JSON_DECODE = "Unable to decode json"
 var DLS_REASON_UNRECOGNIZED_TYPE = "Unrecognized message type"
 
 type Deadletter struct {
-	Subject string `json:"subject"`
-	Reason  string `json:"reason"`
-	Error   string `json:"error"`
-	Message string `json:"message"`
-	Process string `json:"process"`
+	Subject string   `json:"subject"`
+	Reason  string   `json:"reason"`
+	Message string   `json:"message"`
+	Process string   `json:"process"`
+	Errors  []string `json:"errors"`
 }
 
-func SendDeadletter(log *logrus.Entry, nc *nats.Conn, subject, reason, errStr, message, process string) {
-	dl := Deadletter{subject, reason, errStr, message, process}
+func SendDeadletter(log *logrus.Entry, nc *nats.Conn, subject, reason, message, process string, errors []string) {
+	dl := Deadletter{subject, reason, message, process, errors}
 	log.WithFields(logrus.Fields{"deadletter": dl}).Warn("Publishing deadletter message")
 	var dlJson, err = json.Marshal(dl)
 	if err != nil {

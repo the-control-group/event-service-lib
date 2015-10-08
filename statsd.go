@@ -1,24 +1,24 @@
 package lib
 
 import (
-	"github.com/quipo/statsd"
+	"github.com/cactus/go-statsd-client/statsd"
 	"net"
-	"os"
 	"strings"
 	"time"
 )
 
-func NewStatsdBuffer(c Emitter, serviceName string) (statsdbuffer *statsd.StatsdBuffer, err error) {
-	hostname, err := os.Hostname()
-	if err != nil {
+func NewStatsdBuffer(c Emitter, hostname, serviceName string) (statsdbuffer statsd.Statter, err error) {
+	if hostname == "" {
 		hostname = "EventsServiceUnknownHost"
 	}
 	hostname = strings.Replace(hostname, ".", "_", -1)
-	statsdClient := statsd.NewStatsdClient(net.JoinHostPort(c.Host, c.Port), strings.Join([]string{c.Prefix, serviceName, hostname}, ".")+".")
-	err = statsdClient.CreateSocket()
+	if serviceName == "" {
+		serviceName = "EventsServiceUnknownService"
+	}
+	serviceName = strings.Replace(serviceName, ".", "_", -1)
+	statsdbuffer, err = statsd.NewBufferedClient(net.JoinHostPort(c.Host, c.Port), strings.Join([]string{c.Prefix, serviceName, hostname}, ".")+".", time.Duration(c.Interval)*time.Second, 0)
 	if err != nil {
 		return
 	}
-	statsdbuffer = statsd.NewStatsdBuffer(time.Duration(c.Interval)*time.Millisecond, statsdClient)
 	return
 }

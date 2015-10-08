@@ -3,7 +3,6 @@ package lib
 import (
 	"os"
 	"sync"
-	"time"
 )
 
 var SigChan = make(chan os.Signal, 1)
@@ -20,12 +19,12 @@ func signalHandler(sigChan chan os.Signal) {
 	for {
 		sig := <-sigChan
 		SignalLock.Lock()
-		if fns, ok := SignalHandlers[sig]; ok {
+		fns, ok := SignalHandlers[sig]
+		SignalLock.Unlock()
+		if ok {
 			for _, fn := range fns {
 				fn()
 			}
 		}
-		SignalLock.Unlock()
-		time.Sleep(1 * time.Millisecond)
 	}
 }
