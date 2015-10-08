@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-func NewRedisPool(c Address) (pool *redis.Pool, err error) {
+func NewRedisPool(c Address, u Credentials) (pool *redis.Pool, err error) {
 	pool = &redis.Pool{
 		MaxIdle:   5,
 		MaxActive: 10,
@@ -16,6 +16,12 @@ func NewRedisPool(c Address) (pool *redis.Pool, err error) {
 			c, err := redis.Dial("tcp", net.JoinHostPort(c.Host, c.Port))
 			if err != nil {
 				return nil, err
+			}
+			if u.Password != "" {
+				if _, err := c.Do("AUTH", u.Password); err != nil {
+					c.Close()
+					return nil, err
+				}
 			}
 			return c, err
 		},
