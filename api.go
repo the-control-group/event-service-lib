@@ -2,11 +2,12 @@ package lib
 
 import (
 	"bufio"
-	"github.com/Sirupsen/logrus"
 	"net"
 	"net/textproto"
 	"sync"
 	"time"
+
+	"github.com/Sirupsen/logrus"
 )
 
 var ApiWelcomeMessage string = "This is the API welcome message"
@@ -18,6 +19,22 @@ var ApiErrorHandlerFn ApiErrorHandler
 type ApiMessageHandler func(msg []byte, writer *textproto.Writer)
 
 type ApiErrorHandler func(error, *textproto.Writer)
+
+func ListenWithAddress(log *logrus.Entry, addr Address) (listener *net.TCPListener, err error) {
+	// Automatically assign open port
+	address, err := net.ResolveTCPAddr("tcp", net.JoinHostPort(addr.Host, addr.Port))
+	if err != nil {
+		log.WithError(err).Error("Unable to resolve tcp address")
+		return
+	}
+	listener, err = net.ListenTCP("tcp", address)
+	if err != nil {
+		log.WithError(err).Error("Unable to establsih listener")
+		return
+	}
+	go serve(log, listener)
+	return
+}
 
 func Listen(log *logrus.Entry) (listener *net.TCPListener, err error) {
 	// Automatically assign open port
