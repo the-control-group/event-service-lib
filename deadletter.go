@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"github.com/Sirupsen/logrus"
 	"github.com/the-control-group/nats"
+	"time"
 )
 
 var DLS_REASON_UNKNOWN = "Unknown reason"
@@ -11,15 +12,16 @@ var DLS_REASON_JSON_DECODE = "Unable to decode json"
 var DLS_REASON_UNRECOGNIZED_TYPE = "Unrecognized message type"
 
 type Deadletter struct {
-	Subject string   `json:"subject"`
-	Reason  string   `json:"reason"`
-	Message string   `json:"message"`
-	Process string   `json:"process"`
-	Errors  []string `json:"errors"`
+	Subject string    `json:"subject"`
+	Reason  string    `json:"reason"`
+	Message string    `json:"message"`
+	Process string    `json:"process"`
+	Errors  []string  `json:"errors"`
+	Created time.Time `json:"created"`
 }
 
 func SendDeadletter(log *logrus.Entry, nc *nats.Conn, subject, reason, message, process string, errors []string) {
-	dl := Deadletter{subject, reason, message, process, errors}
+	dl := Deadletter{subject, reason, message, process, errors, time.Now()}
 	log.WithFields(logrus.Fields{"deadletter": dl}).Warn("Publishing deadletter message")
 	var dlJson, err = json.Marshal(dl)
 	if err != nil {
