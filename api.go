@@ -83,7 +83,9 @@ func handleConnection(log *logrus.Entry, c *net.TCPConn) {
 	defer c.Close()
 	var timeout = 60 * time.Second
 	writer := textproto.NewWriter(bufio.NewWriter(c))
-	writer.PrintfLine(ApiWelcomeMessage)
+	if ApiWelcomeMessage != "" {
+		writer.PrintfLine(ApiWelcomeMessage)
+	}
 	for {
 		var msg []byte
 		select {
