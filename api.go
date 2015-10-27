@@ -20,7 +20,7 @@ type ApiMessageHandler func(msg []byte, writer *textproto.Writer)
 
 type ApiErrorHandler func(error, *textproto.Writer)
 
-func ListenWithAddress(log *logrus.Entry, addr Address) (listener *net.TCPListener, err error) {
+func ListenWithAddress(log *logrus.Entry, addr Address, timeout time.Duration) (listener *net.TCPListener, err error) {
 	// Automatically assign open port
 	address, err := net.ResolveTCPAddr("tcp", net.JoinHostPort(addr.Host, addr.Port))
 	if err != nil {
@@ -32,7 +32,7 @@ func ListenWithAddress(log *logrus.Entry, addr Address) (listener *net.TCPListen
 		log.WithError(err).Error("Unable to establsih listener")
 		return
 	}
-	go serve(log, listener)
+	go serve(log, listener, timeout)
 	return
 }
 
@@ -48,11 +48,11 @@ func Listen(log *logrus.Entry) (listener *net.TCPListener, err error) {
 		log.WithError(err).Error("Unable to establsih listener")
 		return
 	}
-	go serve(log, listener)
+	go serve(log, listener, 60*time.Second)
 	return
 }
 
-func serve(log *logrus.Entry, listener *net.TCPListener) (err error) {
+func serve(log *logrus.Entry, listener *net.TCPListener, timeout time.Duration) (err error) {
 	var wg sync.WaitGroup
 	for {
 		select {
@@ -72,16 +72,15 @@ func serve(log *logrus.Entry, listener *net.TCPListener) (err error) {
 			wg.Add(1)
 			go func(c *net.TCPConn) {
 				defer wg.Done()
-				handleConnection(log, c)
+				handleConnection(log, c, timeout)
 			}(c)
 		}
 	}
 }
 
-func handleConnection(log *logrus.Entry, c *net.TCPConn) {
+func handleConnection(log *logrus.Entry, c *net.TCPConn, timeout time.Duration) {
 	var err error
 	defer c.Close()
-	var timeout = 60 * time.Second
 	writer := textproto.NewWriter(bufio.NewWriter(c))
 	if ApiWelcomeMessage != "" {
 		writer.PrintfLine(ApiWelcomeMessage)
