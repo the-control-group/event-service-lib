@@ -10,6 +10,7 @@ import (
 var DLS_REASON_UNKNOWN = "Unknown reason"
 var DLS_REASON_JSON_DECODE = "Unable to decode json"
 var DLS_REASON_UNRECOGNIZED_TYPE = "Unrecognized message type"
+var DLS_REASON_INVALID_EVENT = "Invalid event"
 
 type Deadletter struct {
 	Subject string    `json:"subject"`
