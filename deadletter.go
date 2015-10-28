@@ -12,6 +12,7 @@ var DLS_REASON_JSON_DECODE = "Unable to decode json"
 var DLS_REASON_UNRECOGNIZED_TYPE = "Unrecognized message type"
 var DLS_REASON_INVALID_EVENT = "Invalid event"
 var DLS_REASON_WRITE_FAILED = "Write failed"
+var DLS_REASON_MALFORMED_SUBJECT = "Malformed subject"
 
 type Deadletter struct {
 	Subject string    `json:"subject"`
