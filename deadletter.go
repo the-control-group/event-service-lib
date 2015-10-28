@@ -9,6 +9,7 @@ import (
 
 var DLS_REASON_UNKNOWN = "Unknown reason"
 var DLS_REASON_JSON_DECODE = "Unable to decode json"
+var DLS_REASON_JSON_ENCODE = "Unable to encode json"
 var DLS_REASON_UNRECOGNIZED_TYPE = "Unrecognized message type"
 var DLS_REASON_INVALID_EVENT = "Invalid event"
 var DLS_REASON_WRITE_FAILED = "Write failed"
