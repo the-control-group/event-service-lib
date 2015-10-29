@@ -22,3 +22,8 @@ func NewStatsdBuffer(c Emitter, hostname, serviceName string) (statsdbuffer stat
 	}
 	return
 }
+
+// Removes characters with special meaning from event components being sent to statsd
+func CleanStatsdComponent(name string) string {
+	return strings.Replace(strings.Replace(name, ":", "_", -1), ".", "_", -1)
+}
