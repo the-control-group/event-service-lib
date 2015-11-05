@@ -37,8 +37,7 @@ func ListenWithAddress(log *logrus.Entry, addr Address, timeout time.Duration) (
 }
 
 func Listen(log *logrus.Entry) (listener *net.TCPListener, err error) {
-	// Automatically assign open port
-	address, err := net.ResolveTCPAddr("tcp", net.JoinHostPort("127.0.0.1", "0"))
+	address, err := net.ResolveTCPAddr("tcp", net.JoinHostPort("", "10000"))
 	if err != nil {
 		log.WithError(err).Error("Unable to resolve tcp address")
 		return
