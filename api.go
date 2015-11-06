@@ -10,6 +10,7 @@ import (
 	"github.com/Sirupsen/logrus"
 )
 
+// DEPRECATED because it's annoying
 var ApiWelcomeMessage string = "This is the API welcome message"
 
 var ApiMessageHandlerFns = []ApiMessageHandler{}
@@ -81,9 +82,10 @@ func handleConnection(log *logrus.Entry, c *net.TCPConn, timeout time.Duration) 
 	var err error
 	defer c.Close()
 	writer := textproto.NewWriter(bufio.NewWriter(c))
-	if ApiWelcomeMessage != "" {
-		writer.PrintfLine(ApiWelcomeMessage)
-	}
+	// This is annoying
+	// if ApiWelcomeMessage != "" {
+	// 	writer.PrintfLine(ApiWelcomeMessage)
+	// }
 	for {
 		var msg []byte
 		select {
