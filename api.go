@@ -7,7 +7,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/Sirupsen/logrus"
+	"gopkg.in/Sirupsen/logrus.v0"
 )
 
 // DEPRECATED because it's annoying

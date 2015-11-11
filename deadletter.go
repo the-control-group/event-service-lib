@@ -2,7 +2,7 @@ package lib
 
 import (
 	"encoding/json"
-	"github.com/Sirupsen/logrus"
+	"gopkg.in/Sirupsen/logrus.v0"
 	"github.com/the-control-group/nats"
 	"time"
 )

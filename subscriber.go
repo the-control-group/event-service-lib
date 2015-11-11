@@ -1,8 +1,8 @@
 package lib
 
 import (
-	"github.com/Sirupsen/logrus"
 	"github.com/the-control-group/nats"
+	logrus "gopkg.in/Sirupsen/logrus.v0"
 	"sync"
 	"time"
 )
