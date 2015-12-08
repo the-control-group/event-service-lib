@@ -38,7 +38,7 @@ func StatsdEventName(parts ...string) string {
 func EmitEventReceived(stats statsd.Statter, eventName string) (err error) {
 	eventName = CleanStatsdComponent(eventName)
 	if stats != nil {
-		err = stats.Inc("event."+eventName, 1, StatsSampleRate)
+		err = stats.Inc(StatsdEventName("event", eventName), 1, StatsSampleRate)
 	}
 	return
 }
@@ -47,7 +47,7 @@ func EmitEventReceived(stats statsd.Statter, eventName string) (err error) {
 func EmitEventInvalid(stats statsd.Statter, eventName string) (err error) {
 	eventName = CleanStatsdComponent(eventName)
 	if stats != nil {
-		err = stats.Inc("invalid."+eventName, 1, StatsSampleRate)
+		err = stats.Inc(StatsdEventName("invalid", eventName), 1, StatsSampleRate)
 	}
 	return
 }
@@ -67,7 +67,7 @@ func EmitActionFailure(stats statsd.Statter, action, eventName string) (err erro
 	action = CleanStatsdComponent(action)
 	eventName = CleanStatsdComponent(eventName)
 	if stats != nil {
-		err = stats.Inc(action+".failure."+eventName, 1, StatsSampleRate)
+		err = stats.Inc(StatsdEventName("failure", action, eventName), 1, StatsSampleRate)
 	}
 	return
 }
@@ -77,7 +77,7 @@ func EmitActionSuccess(stats statsd.Statter, action, eventName string) (err erro
 	action = CleanStatsdComponent(action)
 	eventName = CleanStatsdComponent(eventName)
 	if stats != nil {
-		err = stats.Inc(action+".success."+eventName, 1, StatsSampleRate)
+		err = stats.Inc(StatsdEventName("success", action, eventName), 1, StatsSampleRate)
 	}
 	return
 }
@@ -86,7 +86,7 @@ func EmitActionSuccess(stats statsd.Statter, action, eventName string) (err erro
 func EmitStopSignal(stats statsd.Statter, signal string) (err error) {
 	signal = CleanStatsdComponent(signal)
 	if stats != nil {
-		err = stats.Inc("stop."+signal, 1, StatsSampleRate)
+		err = stats.Inc(StatsdEventName("stop", signal), 1, StatsSampleRate)
 	}
 	return
 }
@@ -94,7 +94,7 @@ func EmitStopSignal(stats statsd.Statter, signal string) (err error) {
 // Emit reloads as `reload`
 func EmitReload(stats statsd.Statter) (err error) {
 	if stats != nil {
-		err = stats.Inc("reload", 1, StatsSampleRate)
+		err = stats.Inc(StatsdEventName("reload"), 1, StatsSampleRate)
 	}
 	return
 }
