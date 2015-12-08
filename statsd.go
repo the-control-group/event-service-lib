@@ -53,11 +53,10 @@ func EmitEventInvalid(stats statsd.Statter, eventName string) (err error) {
 }
 
 // Emit errors as `error.$event-name`
-func EmitError(stats statsd.Statter, errorStr, eventName string) (err error) {
-	errorStr = CleanStatsdComponent(errorStr)
+func EmitError(stats statsd.Statter, eventName string) (err error) {
 	eventName = CleanStatsdComponent(eventName)
 	if stats != nil {
-		err = stats.Inc(StatsdEventName("error", errorStr, eventName), 1, StatsSampleRate)
+		err = stats.Inc(StatsdEventName("error", eventName), 1, StatsSampleRate)
 	}
 	return
 }
@@ -78,6 +77,16 @@ func EmitActionSuccess(stats statsd.Statter, action, eventName string) (err erro
 	eventName = CleanStatsdComponent(eventName)
 	if stats != nil {
 		err = stats.Inc(StatsdEventName("success", action, eventName), 1, StatsSampleRate)
+	}
+	return
+}
+
+// Emit successful actions as `$action.success.$event-name`
+func EmitActionSuccessTiming(stats statsd.Statter, action, eventName string, took time.Duration) (err error) {
+	action = CleanStatsdComponent(action)
+	eventName = CleanStatsdComponent(eventName)
+	if stats != nil {
+		err = stats.TimingDuration(StatsdEventName("success", eventName), took, StatsSampleRate)
 	}
 	return
 }

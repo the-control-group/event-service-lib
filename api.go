@@ -78,7 +78,7 @@ func serve(log *logrus.Entry, listener *net.TCPListener, timeout time.Duration) 
 	}
 }
 
-func handleConnection(log *logrus.Entry, c *net.TCPConn, timeout time.Duration) {
+func handleConnection(log *logrus.Entry, c net.Conn, timeout time.Duration) {
 	var err error
 	defer c.Close()
 	writer := textproto.NewWriter(bufio.NewWriter(c))
