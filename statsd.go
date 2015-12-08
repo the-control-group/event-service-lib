@@ -7,15 +7,17 @@ import (
 	"time"
 )
 
+const StatsSampleRate = 1
+
 func NewStatsdBuffer(c Emitter, hostname, serviceName string) (statsdbuffer statsd.Statter, err error) {
 	if hostname == "" {
 		hostname = "EventsServiceUnknownHost"
 	}
-	hostname = strings.Replace(hostname, ".", "_", -1)
+	hostname = CleanStatsdComponent(hostname)
 	if serviceName == "" {
 		serviceName = "EventsServiceUnknownService"
 	}
-	serviceName = strings.Replace(serviceName, ".", "_", -1)
+	serviceName = CleanStatsdComponent(serviceName)
 	statsdbuffer, err = statsd.NewBufferedClient(net.JoinHostPort(c.Host, c.Port), strings.Join([]string{c.Prefix, serviceName, hostname}, ".")+".", time.Duration(c.Interval)*time.Second, 0)
 	if err != nil {
 		return
@@ -26,4 +28,73 @@ func NewStatsdBuffer(c Emitter, hostname, serviceName string) (statsdbuffer stat
 // Removes characters with special meaning from event components being sent to statsd
 func CleanStatsdComponent(name string) string {
 	return strings.Replace(strings.Replace(name, ":", "_", -1), ".", "_", -1)
+}
+
+func StatsdEventName(parts ...string) string {
+	return strings.Join(parts, ",")
+}
+
+// Emit received events as `event.$event-name`
+func EmitEventReceived(stats statsd.Statter, eventName string) (err error) {
+	eventName = CleanStatsdComponent(eventName)
+	if stats != nil {
+		err = stats.Inc("event."+eventName, 1, StatsSampleRate)
+	}
+	return
+}
+
+// Emit invalid events as `invalid.$event-name`
+func EmitEventInvalid(stats statsd.Statter, eventName string) (err error) {
+	eventName = CleanStatsdComponent(eventName)
+	if stats != nil {
+		err = stats.Inc("invalid."+eventName, 1, StatsSampleRate)
+	}
+	return
+}
+
+// Emit errors as `error.$event-name`
+func EmitError(stats statsd.Statter, errorStr, eventName string) (err error) {
+	errorStr = CleanStatsdComponent(errorStr)
+	eventName = CleanStatsdComponent(eventName)
+	if stats != nil {
+		err = stats.Inc(StatsdEventName("error", errorStr, eventName), 1, StatsSampleRate)
+	}
+	return
+}
+
+// Emit failed actions as `$action.failure.$event-name`
+func EmitActionFailure(stats statsd.Statter, action, eventName string) (err error) {
+	action = CleanStatsdComponent(action)
+	eventName = CleanStatsdComponent(eventName)
+	if stats != nil {
+		err = stats.Inc(action+".failure."+eventName, 1, StatsSampleRate)
+	}
+	return
+}
+
+// Emit successful actions as `$action.success.$event-name`
+func EmitActionSuccess(stats statsd.Statter, action, eventName string) (err error) {
+	action = CleanStatsdComponent(action)
+	eventName = CleanStatsdComponent(eventName)
+	if stats != nil {
+		err = stats.Inc(action+".success."+eventName, 1, StatsSampleRate)
+	}
+	return
+}
+
+// Emit stop signals as `stop.$signal`
+func EmitStopSignal(stats statsd.Statter, signal string) (err error) {
+	signal = CleanStatsdComponent(signal)
+	if stats != nil {
+		err = stats.Inc("stop."+signal, 1, StatsSampleRate)
+	}
+	return
+}
+
+// Emit reloads as `reload`
+func EmitReload(stats statsd.Statter) (err error) {
+	if stats != nil {
+		err = stats.Inc("reload", 1, StatsSampleRate)
+	}
+	return
 }
