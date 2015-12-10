@@ -86,7 +86,7 @@ func handleConnection(log *logrus.Entry, c net.Conn, timeout time.Duration) {
 	// if ApiWelcomeMessage != "" {
 	// 	writer.PrintfLine(ApiWelcomeMessage)
 	// }
-	bufc := bufio.NewReader(c)
+	bufc := bufio.NewReaderSize(c, 10*1024*1024)
 	for {
 		var msg []byte
 		select {
