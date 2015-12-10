@@ -86,6 +86,7 @@ func handleConnection(log *logrus.Entry, c net.Conn, timeout time.Duration) {
 	// if ApiWelcomeMessage != "" {
 	// 	writer.PrintfLine(ApiWelcomeMessage)
 	// }
+	bufc := bufio.NewReader(c)
 	for {
 		var msg []byte
 		select {
@@ -93,7 +94,6 @@ func handleConnection(log *logrus.Entry, c net.Conn, timeout time.Duration) {
 			return
 		default:
 			c.SetDeadline(time.Now().Add(timeout))
-			bufc := bufio.NewReader(c)
 			msg, err = bufc.ReadBytes('\n')
 			if err != nil {
 				if err.Error() != "EOF" {
@@ -104,6 +104,7 @@ func handleConnection(log *logrus.Entry, c net.Conn, timeout time.Duration) {
 				}
 				return
 			}
+			log.WithField("size", len(msg)).Debug("Read on connection")
 			for _, h := range ApiMessageHandlerFns {
 				h(msg, writer)
 			}
