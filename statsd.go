@@ -18,7 +18,10 @@ func NewStatsdBuffer(c Emitter, hostname, serviceName string) (statsdbuffer stat
 		serviceName = "EventsServiceUnknownService"
 	}
 	serviceName = CleanStatsdComponent(serviceName)
-	statsdbuffer, err = statsd.NewBufferedClient(net.JoinHostPort(c.Host, c.Port), strings.Join([]string{c.Prefix, serviceName, hostname}, ".")+".", time.Duration(c.Interval)*time.Second, 0)
+	prefix := strings.Join([]string{c.Prefix, serviceName, hostname}, ".")
+	prefix = strings.TrimLeft(prefix, ".")
+	prefix = prefix + "."
+	statsdbuffer, err = statsd.NewBufferedClient(net.JoinHostPort(c.Host, c.Port), prefix, time.Duration(c.Interval)*time.Second, 0)
 	if err != nil {
 		return
 	}
@@ -31,7 +34,7 @@ func CleanStatsdComponent(name string) string {
 }
 
 func StatsdEventName(parts ...string) string {
-	return strings.Join(parts, ",")
+	return strings.Join(parts, ".")
 }
 
 // Emit received events as `event.$event-name`
