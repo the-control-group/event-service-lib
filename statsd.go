@@ -20,7 +20,6 @@ func NewStatsdBuffer(c Emitter, hostname, serviceName string) (statsdbuffer stat
 	serviceName = CleanStatsdComponent(serviceName)
 	prefix := strings.Join([]string{c.Prefix, serviceName, hostname}, ".")
 	prefix = strings.TrimLeft(prefix, ".")
-	prefix = prefix + "."
 	statsdbuffer, err = statsd.NewBufferedClient(net.JoinHostPort(c.Host, c.Port), prefix, time.Duration(c.Interval)*time.Second, 0)
 	if err != nil {
 		return
