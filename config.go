@@ -2,6 +2,8 @@ package lib
 
 import (
 	"net"
+	"strings"
+	"time"
 )
 
 type Emitter struct {
@@ -28,4 +30,14 @@ func (addr Address) String() string {
 type Credentials struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
+}
+
+type Duration struct {
+	time.Duration
+}
+
+func (d *Duration) UnmarshalJSON(text []byte) (err error) {
+	var str = strings.Trim(string(text), `"`)
+	d.Duration, err = time.ParseDuration(str)
+	return
 }
