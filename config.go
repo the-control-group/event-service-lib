@@ -41,3 +41,7 @@ func (d *Duration) UnmarshalJSON(text []byte) (err error) {
 	d.Duration, err = time.ParseDuration(str)
 	return
 }
+
+type Publisher interface {
+	Publish(subject string, data []byte) error
+}

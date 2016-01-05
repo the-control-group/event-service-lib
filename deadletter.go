@@ -3,7 +3,6 @@ package lib
 import (
 	"encoding/json"
 	"gopkg.in/Sirupsen/logrus.v0"
-	"github.com/the-control-group/nats"
 	"time"
 )
 
@@ -24,7 +23,7 @@ type Deadletter struct {
 	Created time.Time `json:"created"`
 }
 
-func SendDeadletter(log *logrus.Entry, nc *nats.Conn, subject, reason, message, process string, errors []string) {
+func SendDeadletter(log *logrus.Entry, pub Publisher, subject, reason, message, process string, errors []string) {
 	dl := Deadletter{subject, reason, message, process, errors, time.Now()}
 	log.WithFields(logrus.Fields{"deadletter": dl}).Warn("Publishing deadletter message")
 	var dlJson, err = json.Marshal(dl)
@@ -32,7 +31,7 @@ func SendDeadletter(log *logrus.Entry, nc *nats.Conn, subject, reason, message, 
 		log.WithError(err).WithField("deadletter", dl).Error("Unable to marshal deadletter json")
 		return
 	}
-	err = nc.Publish("deadletter", dlJson)
+	err = pub.Publish("deadletter", dlJson)
 	if err != nil {
 		log.WithError(err).Error("Unable to publish deadletter message")
 	}
