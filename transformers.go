@@ -1,5 +1,9 @@
 package lib
 
+import (
+	"time"
+)
+
 const TRANSFORM_FAILED = "Transform failed"
 
 type Transformer struct {

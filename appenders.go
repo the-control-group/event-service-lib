@@ -1,5 +1,9 @@
 package lib
 
+import (
+	"time"
+)
+
 const APPEND_FAILED = "Append failed"
 
 type Appender struct {
