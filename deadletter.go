@@ -15,16 +15,17 @@ var DLS_REASON_WRITE_FAILED = "Write failed"
 var DLS_REASON_MALFORMED_SUBJECT = "Malformed subject"
 
 type Deadletter struct {
-	Subject string    `json:"subject"`
-	Reason  string    `json:"reason"`
-	Message string    `json:"message"`
-	Process string    `json:"process"`
-	Errors  []string  `json:"errors"`
-	Created time.Time `json:"created"`
+	Subject        string    `json:"subject"`
+	Reason         string    `json:"reason"`
+	Message        string    `json:"message"`
+	Process        string    `json:"process"`
+	ProcessVersion string    `json:"process_version"`
+	Errors         []string  `json:"errors"`
+	Created        time.Time `json:"created"`
 }
 
-func SendDeadletter(log *logrus.Entry, pub Publisher, subject, reason, message, process string, errors []string) {
-	dl := Deadletter{subject, reason, message, process, errors, time.Now()}
+func SendDeadletter(log *logrus.Entry, pub Publisher, subject, reason, message, process, process_version string, errors []string) {
+	dl := Deadletter{subject, reason, message, process, process_version, errors, time.Now()}
 	log.WithFields(logrus.Fields{"deadletter": dl}).Warn("Publishing deadletter message")
 	var dlJson, err = json.Marshal(dl)
 	if err != nil {
