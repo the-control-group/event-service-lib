@@ -15,12 +15,12 @@ var DLS_REASON_WRITE_FAILED = "Write failed"
 var DLS_REASON_MALFORMED_SUBJECT = "Malformed subject"
 
 type Deadletter struct {
-	Subject        string    `json:"subject"`
-	Reason         string    `json:"reason"`
-	Message        string    `json:"message"`
-	Process        string    `json:"process"`
-	ProcessVersion string    `json:"process_version"`
-	Errors         []string  `json:"errors"`
+	Subject        string    `json:"subject"` // The name of the event
+	Reason         string    `json:"reason"` // The generic reason for the deadletter (i.e. "database error")
+	Message        string    `json:"message"` // A more qualified reason for the deadletter (i.e. "commit failed")
+	Process        string    `json:"process"` // The name of the process that generated the deadletter so it can be traced and backfilled
+	ProcessVersion string    `json:"process_version"` // The version of the process that generated the deadletter
+	Errors         []string  `json:"errors"` // A place to include any raw errors that triggered the deadletter
 	Created        time.Time `json:"created"`
 }
 

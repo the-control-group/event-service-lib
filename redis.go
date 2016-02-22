@@ -34,6 +34,6 @@ func NewRedisPool(c Address, u Credentials) (pool *redis.Pool, err error) {
 	return
 }
 
-func NewReloadLock(pool *redis.Pool, processName, hostname string) *redissync.RedisSync {
-	return &redissync.RedisSync{Key: processName + "_" + hostname + "__restarting", Pool: pool, Timeout: 30 * time.Minute, Delay: 1 * time.Second, Expiry: 5 * time.Minute, ErrChan: make(chan error, 1)}
+func NewReloadLock(pool *redis.Pool, processName string) *redissync.RedisSync {
+	return &redissync.RedisSync{Key: processName + ".reload", Pool: pool, Timeout: 5 * time.Minute, Delay: 1 * time.Second, Expiry: 1 * time.Minute, ErrChan: make(chan error, 1)}
 }
