@@ -9,6 +9,7 @@ import (
 func NewGnatsConnection(log *logrus.Entry, addr Address) (nc *nats.Conn, err error) {
 	var opts = nats.DefaultOptions
 	opts.Servers = []string{"nats://" + net.JoinHostPort(addr.Host, addr.Port)}
+	opts.MaxReconnect = -1
 	opts.ClosedCB = func(nc *nats.Conn) {
 		log.Warn("Nats connection closed")
 	}
