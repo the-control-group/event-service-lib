@@ -88,7 +88,7 @@ func EmitActionSuccessTiming(stats statsd.Statter, action, eventName string, too
 	action = CleanStatsdComponent(action)
 	eventName = CleanStatsdComponent(eventName)
 	if stats != nil {
-		err = stats.TimingDuration(StatsdEventName("success", eventName), took, StatsSampleRate)
+		err = stats.TimingDuration(StatsdEventName(action, eventName), took, StatsSampleRate)
 	}
 	return
 }
