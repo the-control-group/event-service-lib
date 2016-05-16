@@ -2,6 +2,7 @@ package lib
 
 import (
 	"bufio"
+	"bytes"
 	"net"
 	"net/textproto"
 	"sync"
@@ -105,6 +106,9 @@ func handleConnection(log *logrus.Entry, c net.Conn, timeout time.Duration) {
 				return
 			}
 			log.WithField("size", len(msg)).Debug("Read on connection")
+			if bytes.Compare(msg, []byte(`close`)) == 0 {
+				return
+			}
 			for _, h := range ApiMessageHandlerFns {
 				h(msg, writer)
 			}
