@@ -1,14 +1,19 @@
 package lib
 
 import (
+	"fmt"
 	"gopkg.in/Sirupsen/logrus.v0"
 	"gopkg.in/nats-io/nats.v1"
 	"net"
 )
 
-func NewGnatsConnection(log *logrus.Entry, addr Address) (nc *nats.Conn, err error) {
+func NewGnatsConnection(log *logrus.Entry, addr Address, creds *Credentials) (nc *nats.Conn, err error) {
 	var opts = nats.DefaultOptions
-	opts.Servers = []string{"nats://" + net.JoinHostPort(addr.Host, addr.Port)}
+	if creds != nil {
+		opts.Servers = []string{fmt.Sprintf("nats://%s:%s@%s", creds.Username, creds.Password, net.JoinHostPort(addr.Host, addr.Port))}
+	} else {
+		opts.Servers = []string{"nats://" + net.JoinHostPort(addr.Host, addr.Port)}
+	}
 	opts.ClosedCB = func(nc *nats.Conn) {
 		log.Warn("Nats connection closed")
 	}

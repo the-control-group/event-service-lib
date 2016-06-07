@@ -8,6 +8,7 @@ import (
 
 type Emitter struct {
 	Address
+	Credentials
 	Interval int    `json:"interval"`
 	Prefix   string `json:"prefix"`
 }
