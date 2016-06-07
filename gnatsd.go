@@ -9,7 +9,7 @@ import (
 
 func NewGnatsConnection(log *logrus.Entry, addr Address, creds *Credentials) (nc *nats.Conn, err error) {
 	var opts = nats.DefaultOptions
-	if creds != nil {
+	if creds != nil && creds.Username != "" && creds.Password != "" {
 		opts.Servers = []string{fmt.Sprintf("nats://%s:%s@%s", creds.Username, creds.Password, net.JoinHostPort(addr.Host, addr.Port))}
 	} else {
 		opts.Servers = []string{"nats://" + net.JoinHostPort(addr.Host, addr.Port)}
