@@ -1,8 +1,8 @@
 package lib
 
 import (
-	"github.com/the-control-group/nats"
 	"gopkg.in/Sirupsen/logrus.v0"
+	"gopkg.in/nats-io/nats.v1"
 	"net"
 )
 
