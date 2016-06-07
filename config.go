@@ -15,6 +15,7 @@ type Emitter struct {
 
 type Listener struct {
 	Address
+	Credentials
 	Group  string `json:"group"`
 	Prefix string `json:"prefix"`
 }
