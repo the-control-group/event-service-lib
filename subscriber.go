@@ -28,6 +28,7 @@ func HandleMessages(log *logrus.Entry, wg *sync.WaitGroup, subscription *nats.Su
 				// Ignore
 			default:
 				log.WithError(err).Warn("Unable to read next message")
+				return
 			}
 			time.Sleep(1 * time.Second)
 			continue
